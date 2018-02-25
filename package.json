@@ -1,19 +1,39 @@
 {
   "name": "check-deadlink",
   "version": "0.0.0",
-  "main": "index.js",
+  "main": "dist/check-deadlink.js",
+  "cjs:main": "dist/check-deadlink.js",
+  "types": "dist/check-deadlink.d.ts",
   "repository": "git@github.com:nju33/check-deadlink.git",
   "author": "nju33 <nju33.ki@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+  	"access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "yarn build:cjs",
+    "build:cjs": "tsc -p tsconfig.cjs.json"
+  },
   "devDependencies": {
     "@geekcojp/tslint-config": "^0.1.2",
+    "microbundle": "^0.4.4",
     "ts-node": "^5.0.0",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2"
   },
   "dependencies": {
+    "@types/delay": "^2.0.1",
     "@types/got": "^7.1.7",
+    "@types/jsdom": "^11.0.4",
+    "@types/lodash": "^4.14.104",
+    "delay": "^2.0.0",
     "get-urls": "^7.2.0",
-    "got": "^8.2.0"
+    "got": "^8.2.0",
+    "jsdom": "^11.6.2",
+    "lodash": "^4.17.5"
   }
 }

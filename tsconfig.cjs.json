@@ -1,0 +1,17 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es2017", "es2015.core", "es2015", "dom"],
+    "jsx": "react",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "declaration": true,
+    "strict": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
