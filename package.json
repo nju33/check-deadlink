@@ -1,6 +1,6 @@
 {
   "name": "check-deadlink",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "dist/check-deadlink.js",
   "cjs:main": "dist/check-deadlink.js",
   "types": "dist/check-deadlink.d.ts",
@@ -8,7 +8,7 @@
   "author": "nju33 <nju33.ki@gmail.com>",
   "license": "MIT",
   "publishConfig": {
-  	"access": "public"
+    "access": "public"
   },
   "files": [
     "dist"
