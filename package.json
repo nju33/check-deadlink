@@ -1,0 +1,19 @@
+{
+  "name": "check-deadlink",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:nju33/check-deadlink.git",
+  "author": "nju33 <nju33.ki@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@geekcojp/tslint-config": "^0.1.2",
+    "ts-node": "^5.0.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "@types/got": "^7.1.7",
+    "get-urls": "^7.2.0",
+    "got": "^8.2.0"
+  }
+}
