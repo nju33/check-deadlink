@@ -1,16 +1,17 @@
-import {URL} from 'url';
 import {JSDOM} from 'jsdom';
 // tslint:disable-next-line no-unused
 import {groupBy, uniq, difference, Dictionary} from 'lodash';
 import got = require('got');
-import getUrls = require('get-urls');
 import delay = require('delay');
+import * as dom from './helpers/dom';
+import * as ipath from './helpers/ipath';
 
 declare namespace checkDeadlink {
   export interface Result {
     status: number;
     url: string;
     parentUrl?: string;
+    error?: got.GotError
   }
 
   export interface Config {
@@ -42,71 +43,60 @@ const checked: (url: string, data: checkDeadlink.Data) => boolean = (url, data) 
 
 const checkDeadlink = async (
   url: string,
-  parentUrl?: string,
   config: checkDeadlink.Config = {...defaultConfig},
+  parentUrl?: string,
   data: checkDeadlink.Data = initialData,
   deep: number = 1
 ) => {
-  const flattenUrl = url.replace('www.', '');
+  const normalizedUrl = ipath.normalize(url);
   if (data.baseUrl === undefined) {
-    data.baseUrl = flattenUrl;
+    data.baseUrl = normalizedUrl
+  }
+
+  if (config.verbose) {
+    if (parentUrl === undefined) {
+      console.log(normalizedUrl);
+    } else {
+      console.log(parentUrl, ' -> ', normalizedUrl);
+    }
   }
 
   try {
-    const res = await got(url, {
-      timeout: 8000
-    });
+    const res = await got(url, {timeout: 20000});
     data.result[url] = {
       status: res.statusCode as number,
       url,
       parentUrl
     };
 
-    if (flattenUrl.startsWith(data.baseUrl)) {
+    if (normalizedUrl.startsWith(data.baseUrl)) {
       const doc = new JSDOM(res.body).window.document;
       const html = doc.body.innerHTML;
-      const urls = difference(
-        uniq([
-          ...Array.from<string>(getUrls(html)).filter(
-            thisUrl => !checked(thisUrl, data)
-          ),
-          ...Array.from(doc.getElementsByTagName('a')).map(a => {
-            const href = a.getAttribute('href') as string;
+      const urls = dom.getLinks(normalizedUrl, html)
+        .filter(thisUrl => !checked(thisUrl, data));
 
-            return new URL(href, url).toString();
-          })
-        ]),
-        Object.keys(data.result)
-      );
-
-      // for (const thisUrl of urls) {
       await Promise.all(
         urls.map(async (thisUrl, i) => {
-          if (deep + 1 > config.deep) {
+          const normalizedThisUrl = ipath.normalize(thisUrl);
+
+          if (normalizedUrl === normalizedThisUrl || deep + 1 > config.deep) {
             return;
           }
 
           await delay(i * 15);
-          const currentUrl = new URL(thisUrl);
-          currentUrl.hash = '';
-          currentUrl.search = '';
 
-          if (data.result[currentUrl.toString()] !== undefined) {
+          if (data.result[normalizedThisUrl] !== undefined) {
             return;
           }
 
-          if (data.result[currentUrl.toString()] === undefined) {
-            data.result[currentUrl.toString()] = {};
-          }
-
-          if (config.verbose) {
-            console.log(currentUrl.toString())
+          if (data.result[normalizedThisUrl] === undefined) {
+            data.result[normalizedThisUrl] = {};
           }
 
           await checkDeadlink(
-            thisUrl,
-            currentUrl.toString(),
+            normalizedThisUrl,
             config,
+            normalizedUrl,
             data,
             deep + 1
           );
@@ -119,7 +109,8 @@ const checkDeadlink = async (
       data.result[url] = {
         status: -1,
         url,
-        parentUrl
+        parentUrl,
+        error: err,
       };
 
       return;
@@ -128,7 +119,8 @@ const checkDeadlink = async (
     data.result[url] = {
       status: res.statusCode as number,
       url,
-      parentUrl
+      parentUrl,
+      error: err
     };
 
     return;
@@ -137,7 +129,7 @@ const checkDeadlink = async (
   const groupedByParentUrl = groupBy(data.result, 'parentUrl');
   Object.keys(groupedByParentUrl).forEach(thisUrl => {
     const deadlinks = (groupedByParentUrl[thisUrl] as checkDeadlink.Result[]).filter(result => {
-      return result.status === 404 || result.status === 500;
+      return result.status === -1 || result.status === 404 || result.status === 500;
     });
 
     if (deadlinks.length === 0) {
