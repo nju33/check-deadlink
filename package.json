@@ -15,12 +15,14 @@
   ],
   "scripts": {
     "test": "jest",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "prepare": "yarn build",
     "build": "yarn build:cjs",
     "build:cjs": "tsc -p tsconfig.cjs.json"
   },
   "devDependencies": {
     "@geekcojp/tslint-config": "^0.1.2",
+    "coveralls": "^3.0.0",
     "microbundle": "^0.4.4",
     "ts-node": "^5.0.0",
     "tslint": "^5.9.1",
