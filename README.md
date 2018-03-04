@@ -17,7 +17,7 @@ yarn add [-D] check-deadlink
 ## Example
 
 ```ts
-const checkDeadlink = require('../src/check-deadlink');
+const checkDeadlink = require('check-deadlink');
 
 (async () => {
   const result = await checkDeadlink('https://example.com', {
