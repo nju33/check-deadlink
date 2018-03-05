@@ -24,7 +24,7 @@ const checkDeadlink = async (url: string, options: PadexOptions = {}) => {
     };
 
     return acc;
-  }, {} as any);
+  }, {} as checkDeadlink.Result);
 };
 
 export = checkDeadlink;
