@@ -1,6 +1,6 @@
 {
   "name": "check-deadlink",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/check-deadlink.js",
   "cjs:main": "dist/check-deadlink.js",
   "types": "dist/check-deadlink.d.ts",
