@@ -1,5 +1,7 @@
 # check-deadlink
 
+Examine deadlinks in a pages
+
 [![npm: check-deadlink](https://img.shields.io/npm/v/check-deadlink.svg)](https://www.npmjs.com/package/check-deadlink)
 [![CircleCI](https://circleci.com/gh/nju33/check-deadlink.svg?style=svg&circle-token=a28ff5af8b1e0a0e3f4ec38d619681fc4886f63c)](https://circleci.com/gh/nju33/check-deadlink)
 [![Coverage Status](https://coveralls.io/repos/github/nju33/check-deadlink/badge.svg?branch=master)](https://coveralls.io/github/nju33/check-deadlink?branch=master)
@@ -20,11 +22,18 @@ yarn add [-D] check-deadlink
 const checkDeadlink = require('check-deadlink');
 
 (async () => {
-  const result = await checkDeadlink('https://example.com', {
-    verbose: true
-  });
-
-  console.log(result);
+  // options is options of the `padex` package
+  const result = await checkDeadlink('https://example.com', options);
+  // result === {
+  //   'http://error.com': {
+  //     document,
+  //     from: [document, document, ...],
+  //     /* In the above `from`,
+  //      * Array of the Document of the `padex` package,
+  //      * that has linked to this document
+  //      */
+  //   }
+  // }
 })()
   .catch(err => {
     console.error(err);
